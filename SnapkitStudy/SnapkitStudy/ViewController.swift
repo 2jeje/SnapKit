@@ -22,7 +22,6 @@ class ViewController: UIViewController {
         return v
     }()
     
-    
     lazy var blackView: UIView = {
         let v = UIView(frame: .zero)
         v.backgroundColor = .black
@@ -41,15 +40,45 @@ class ViewController: UIViewController {
         return v
     }()
     
+    var constraints = 50.0
+    var animationOffeSet = -2.0
+    
+    override func loadView() {
+        super.loadView()
+        print("loadView")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        print("viewDidLoad")
         self.view.addSubview(yellowView)
         self.view.addSubview(blueView)
         
         self.view.addSubview(blackView)
         self.view.addSubview(redView)
         redView.addSubview(greenView)
-        
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        print("viewWillAppear")
+    }
+    
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        print("viewWillLayoutSubviews")
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        print("viewDidLayoutSubviews")
+    }
+
+    
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        print("viewDidAppear")
         yellowView.snp.makeConstraints { (make) in
             make.left.equalTo(self.view)
             make.right.equalTo(self.view)
@@ -80,10 +109,22 @@ class ViewController: UIViewController {
         
         greenView.snp.makeConstraints { make in
             make.center.equalToSuperview()
-            make.edges.equalToSuperview().inset(50)
+            make.edges.equalToSuperview().inset(constraints)
         }
+        startAnimation()
+
     }
 
-
+    
+    func startAnimation() {
+        UIView.animate(withDuration: 10.0 ,delay: 0.0,options: [.repeat, .autoreverse], animations: {
+            self.greenView.snp.updateConstraints{ make in
+                make.center.equalToSuperview()
+                make.edges.equalToSuperview().inset(0)
+            }
+            self.greenView.layoutIfNeeded()
+        }, completion: nil)
+    }
+    
 }
 
