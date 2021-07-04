@@ -77,7 +77,6 @@ class ViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         print("viewWillAppear")
-        //
     }
     
     override func viewWillLayoutSubviews() {
@@ -145,17 +144,16 @@ class ViewController: UIViewController {
         
         greenView.snp.makeConstraints { make in
             make.center.equalToSuperview()
-            print("test \((constraintsValue))")
-            constrints = make.edges.equalToSuperview().inset(50).constraint//  equalToSuperview().inset(0)
+            constrints = make.edges.equalToSuperview().inset(50).constraint
         }
     }
     
     func startAnimation() {
+        self.redView.layoutIfNeeded()
+        self.constrints?.update(inset: 0)
 
         UIView.animate(withDuration: 5.0 ,delay: 0.0,options: [.repeat, .autoreverse], animations: {
-            self.constrints?.update(inset: 0)
-            self.greenView.layoutIfNeeded()
-
+            self.redView.layoutIfNeeded()
         }, completion: { _ in
             self.constrints?.update(inset: 50)
             self.greenView.layoutIfNeeded()
