@@ -40,8 +40,9 @@ class ViewController: UIViewController {
         return v
     }()
     
-    var constraints = 50.0
-    var animationOffeSet = -2.0
+    var constraintsValue = 50.0
+    var isFirst = true
+    var constrints: Constraint? = nil
     
     override func loadView() {
         super.loadView()
@@ -57,28 +58,63 @@ class ViewController: UIViewController {
         self.view.addSubview(blackView)
         self.view.addSubview(redView)
         redView.addSubview(greenView)
+        
+        NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification,
+                                                                  object: nil,
+                                                                  queue: .main) {
+                                                                  [unowned self] notification in
+            if isFirst == false {
+                print("foreground")
+                resetView()
+                initView()
+                startAnimation()
+                //view.setNeedsLayout()
+            }
+            isFirst = false
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         print("viewWillAppear")
+        //
     }
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         print("viewWillLayoutSubviews")
+
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         print("viewDidLayoutSubviews")
-    }
 
-    
+    }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         print("viewDidAppear")
+        resetView()
+        initView()
+        startAnimation()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        print("viewWillDisappear")
+    }
+
+    func resetView() {
+        yellowView.snp.removeConstraints()
+        blueView.snp.removeConstraints()
+        blackView.snp.removeConstraints()
+        redView.snp.removeConstraints()
+        greenView.snp.removeConstraints()
+    }
+    
+    func initView() {
+
         yellowView.snp.makeConstraints { (make) in
             make.left.equalTo(self.view)
             make.right.equalTo(self.view)
@@ -109,21 +145,21 @@ class ViewController: UIViewController {
         
         greenView.snp.makeConstraints { make in
             make.center.equalToSuperview()
-            make.edges.equalToSuperview().inset(constraints)
+            print("test \((constraintsValue))")
+            constrints = make.edges.equalToSuperview().inset(50).constraint//  equalToSuperview().inset(0)
         }
-        startAnimation()
-
     }
-
     
     func startAnimation() {
-        UIView.animate(withDuration: 10.0 ,delay: 0.0,options: [.repeat, .autoreverse], animations: {
-            self.greenView.snp.updateConstraints{ make in
-                make.center.equalToSuperview()
-                make.edges.equalToSuperview().inset(0)
-            }
+
+        UIView.animate(withDuration: 5.0 ,delay: 0.0,options: [.repeat, .autoreverse], animations: {
+            self.constrints?.update(inset: 0)
             self.greenView.layoutIfNeeded()
-        }, completion: nil)
+
+        }, completion: { _ in
+            self.constrints?.update(inset: 50)
+            self.greenView.layoutIfNeeded()
+        })
     }
     
 }
